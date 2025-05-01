@@ -14,19 +14,30 @@ export const AuthProvider = ({ children }) => {
         const token = localStorage.getItem('token');
         const stored = localStorage.getItem('user');
         if (token && stored) {
+          // Set user from localStorage first to maintain state across page reloads
+          const storedUser = JSON.parse(stored);
+          setUser(storedUser);
+          
+          // Set the authorization header
           api.defaults.headers.common.Authorization = `Bearer ${token}`;
           
-          // Verify token with backend
+          // Verify token with backend, but don't clear user if it fails temporarily
           try {
             const response = await api.get('/auth/verify');
-            // If verification is successful, set the user
-            setUser(JSON.parse(stored));
+            // If verification returns updated user data, use it
+            if (response.data && response.data.user) {
+              setUser(response.data.user);
+              localStorage.setItem('user', JSON.stringify(response.data.user));
+            }
           } catch (verifyError) {
             console.error("Token verification failed:", verifyError);
-            // If verification fails, clear auth data
-            localStorage.removeItem('token');
-            localStorage.removeItem('user');
-            delete api.defaults.headers.common.Authorization;
+            // Only clear auth data if the token is explicitly invalid (401 error)
+            if (verifyError.response && verifyError.response.status === 401) {
+              localStorage.removeItem('token');
+              localStorage.removeItem('user');
+              delete api.defaults.headers.common.Authorization;
+              setUser(null);
+            }
           }
         }
       } catch (error) {

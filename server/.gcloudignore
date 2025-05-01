@@ -1,0 +1,20 @@
+# Node.js dependencies
+node_modules/
+npm-debug.log
+
+# Git files
+.git/
+.gitignore
+
+# Development files
+*.md
+*.test.js
+__tests__/
+
+# Environment variables
+.env*
+!.env.example
+
+# Other unnecessary files
+.DS_Store
+*.log

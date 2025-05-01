@@ -14,7 +14,8 @@
     "dev": "cross-env NODE_ENV=development nodemon src/index.js",
     "test": "jest --runInBand",
     "create-admin": "node src/scripts/create-admin.js",
-    "seed-admin": "node src/scripts/seed-admin.js"
+    "seed-admin": "node src/scripts/seed-admin.js",
+    "deploy": "gcloud builds submit --tag gcr.io/creator-dashboard-22c1c/creator-dashboard-api && gcloud run deploy creator-dashboard-api --image gcr.io/creator-dashboard-22c1c/creator-dashboard-api --platform managed"
   },
   "devDependencies": {
     "cross-env": "^7.0.3",
